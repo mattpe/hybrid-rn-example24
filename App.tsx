@@ -1,20 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {StatusBar} from 'expo-status-bar';
+import {Platform, SafeAreaView, StyleSheet, Text} from 'react-native';
 
-export default function App() {
+const App = () => {
+  console.log('moro');
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+    <SafeAreaView style={styles.container}>
+      <Text>HeLLO!</Text>
       <StatusBar style="auto" />
-    </View>
+    </SafeAreaView>
   );
-}
+};
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: Platform.OS === 'android' ? 30 : 0,
   },
 });
