@@ -1,7 +1,7 @@
 import {Controller, useForm} from 'react-hook-form';
 import {Button, Card, Input} from '@rneui/base';
-import {useUser} from '../hooks/apiHooks';
 import {Alert} from 'react-native';
+import {useUser} from '../hooks/apiHooks';
 
 const RegisterForm = ({handleToggle}: {handleToggle: () => void}) => {
   const {postUser, getUsernameAvailable, getEmailAvailable} = useUser();
@@ -33,7 +33,7 @@ const RegisterForm = ({handleToggle}: {handleToggle: () => void}) => {
       Alert.alert('User created', 'You can now login');
       handleToggle();
     } catch (error) {
-      console.log('Error', (error as Error).message);
+      Alert.alert('Error', (error as Error).message);
     }
   };
 
