@@ -15,6 +15,7 @@ const RegisterForm = () => {
     control,
     handleSubmit,
     formState: {errors},
+    getValues,
   } = useForm({
     defaultValues: initValues,
     mode: 'onBlur',
@@ -85,13 +86,8 @@ const RegisterForm = () => {
         control={control}
         rules={{
           required: {value: true, message: 'is required'},
-          validate: (value) => {
-            const password = 'salasana';
-            if (value !== password) {
-              return 'Passwords do not match';
-            }
-            return true;
-          },
+          validate: (value) =>
+            value !== getValues().password ? true : 'Passwords do not match',
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <Input
