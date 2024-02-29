@@ -1,6 +1,5 @@
 import {Controller, useForm} from 'react-hook-form';
 import {Button, Card, Input} from '@rneui/base';
-import {Credentials} from '../types/LocalTypes';
 import {useUser} from '../hooks/apiHooks';
 
 const RegisterForm = () => {
@@ -21,7 +20,13 @@ const RegisterForm = () => {
     mode: 'onBlur',
   });
 
-  const doRegister = async (inputs: Credentials) => {
+  const doRegister = async (inputs: {
+    username: string;
+    password: string;
+    confirmPassword?: string;
+    email: string;
+  }) => {
+    delete inputs.confirmPassword;
     await postUser(inputs);
   };
 

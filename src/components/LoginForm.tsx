@@ -49,7 +49,7 @@ const LoginForm = () => {
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <Input
-            placeholder="password"
+            placeholder="Password"
             secureTextEntry
             onBlur={onBlur}
             onChangeText={onChange}
