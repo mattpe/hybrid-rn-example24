@@ -87,7 +87,7 @@ const RegisterForm = () => {
         rules={{
           required: {value: true, message: 'is required'},
           validate: (value) =>
-            value !== getValues().password ? true : 'Passwords do not match',
+            value === getValues().password ? true : 'Passwords do not match',
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <Input
