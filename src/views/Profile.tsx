@@ -1,9 +1,12 @@
-import {Text, View} from 'react-native';
+import {Button} from '@rneui/base';
+import {View} from 'react-native';
+import {useUserContext} from '../hooks/ContextHooks';
 
 const Profile = () => {
+  const {handleLogout} = useUserContext();
   return (
     <View>
-      <Text>This is profile page</Text>
+      <Button title="Logout" onPress={handleLogout} />
     </View>
   );
 };
