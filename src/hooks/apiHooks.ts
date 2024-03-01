@@ -86,7 +86,7 @@ const useMedia = () => {
     );
   };
 
-  const putMedia = (
+  const putMedia = async (
     inputs: Record<string, string>,
     token: string,
     media_id: number,
@@ -104,7 +104,7 @@ const useMedia = () => {
     );
   };
 
-  return {mediaArray, postMedia};
+  return {mediaArray, postMedia, putMedia};
 };
 
 const useUser = () => {
