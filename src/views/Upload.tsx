@@ -2,7 +2,9 @@ import {Controller, useForm} from 'react-hook-form';
 import {Button, Card, Input} from '@rneui/base';
 import * as ImagePicker from 'expo-image-picker';
 import {useState} from 'react';
+import {TouchableOpacity, Keyboard, ScrollView} from 'react-native';
 import {useFile, useMedia} from '../hooks/apiHooks';
+import {Video} from 'expo-av';
 
 const Upload = () => {
   const [image, setImage] = useState<ImagePicker.ImagePickerResult | null>(
@@ -42,57 +44,75 @@ const Upload = () => {
   };
 
   return (
-    <Card>
-      <Card.Image
-        onPress={pickImage}
-        style={{aspectRatio: 1, height: 300}}
-        source={{
-          uri: image
-            ? image.assets![0].uri
-            : 'https://via.placeholder.com/150?text=Choose+media',
-        }}
-      />
-      <Controller
-        control={control}
-        rules={{
-          required: {
-            value: true,
-            message: 'Title tarttis laittaa',
-          },
-        }}
-        render={({field: {onChange, onBlur, value}}) => (
-          <Input
-            placeholder="Title"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            errorMessage={errors.title?.message}
+    <ScrollView>
+      <TouchableOpacity
+        onPress={() => Keyboard.dismiss()}
+        style={{flex: 1}}
+        activeOpacity={1}
+      >
+        <Card>
+          {image && image.assets![0].mimeType?.includes('video') ? (
+            <Video
+              source={{uri: image.assets![0].uri}}
+              style={{height: 300}}
+              useNativeControls
+            />
+          ) : (
+            <Card.Image
+              onPress={pickImage}
+              style={{aspectRatio: 1, height: 300}}
+              source={{
+                uri: image
+                  ? image.assets![0].uri
+                  : 'https://via.placeholder.com/150?text=Choose+media',
+              }}
+            />
+          )}
+          <Controller
+            control={control}
+            rules={{
+              required: {
+                value: true,
+                message: 'Title tarttis laittaa',
+              },
+            }}
+            render={({field: {onChange, onBlur, value}}) => (
+              <Input
+                placeholder="Title"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.title?.message}
+              />
+            )}
+            name="title"
           />
-        )}
-        name="title"
-      />
 
-      <Controller
-        control={control}
-        rules={{
-          maxLength: 1000,
-        }}
-        render={({field: {onChange, onBlur, value}}) => (
-          <Input
-            placeholder="Description"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            errorMessage={errors.description?.message}
-            multiline={true}
-            numberOfLines={5}
-            style={{height: 120, textAlignVertical: 'top'}}
+          <Controller
+            control={control}
+            rules={{
+              maxLength: 1000,
+            }}
+            render={({field: {onChange, onBlur, value}}) => (
+              <Input
+                placeholder="Description"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.description?.message}
+                multiline={true}
+                numberOfLines={5}
+                style={{height: 120, textAlignVertical: 'top'}}
+              />
+            )}
+            name="description"
           />
-        )}
-        name="description"
-      />
-      <Button title="Upload" onPress={handleSubmit(doUpload)} />
-    </Card>
+          <Button title="Choose media" onPress={pickImage} />
+          <Card.Divider />
+          <Button title="Upload" onPress={handleSubmit(doUpload)} />
+        </Card>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 
