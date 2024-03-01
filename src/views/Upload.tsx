@@ -45,6 +45,7 @@ const Upload = () => {
     <Card>
       <Card.Image
         onPress={pickImage}
+        style={{aspectRatio: 1, height: 300}}
         source={{
           uri: image
             ? image.assets![0].uri
