@@ -1,8 +1,13 @@
 import {Controller, useForm} from 'react-hook-form';
 import {Button, Card, Input} from '@rneui/base';
+import * as ImagePicker from 'expo-image-picker';
+import {useState} from 'react';
 import {useFile, useMedia} from '../hooks/apiHooks';
 
 const Upload = () => {
+  const [image, setImage] = useState<ImagePicker.ImagePickerResult | null>(
+    null,
+  );
   const {postFile} = useFile();
   const {postMedia} = useMedia();
   const initValues = {title: '', description: ''};
@@ -20,10 +25,31 @@ const Upload = () => {
     // await postMedia();
   };
 
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result);
+    }
+  };
+
   return (
     <Card>
       <Card.Image
-        source={{uri: 'https://via.placeholder.com/150?text=Choose+media'}}
+        onPress={pickImage}
+        source={{
+          uri: image
+            ? image.assets![0].uri
+            : 'https://via.placeholder.com/150?text=Choose+media',
+        }}
       />
       <Controller
         control={control}
