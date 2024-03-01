@@ -1,13 +1,44 @@
-import {Button} from '@rneui/base';
-import {View} from 'react-native';
-import {useUserContext} from '../hooks/ContextHooks';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
+import {Button, Card, Icon, ListItem} from '@rneui/themed';
+
+import useUserContext from '../hooks/UserHook';
 
 const Profile = () => {
-  const {handleLogout} = useUserContext();
+  const {handleLogout, user} = useUserContext();
+  const navigation: NavigationProp<ParamListBase> = useNavigation();
   return (
-    <View>
-      <Button title="Logout" onPress={handleLogout} />
-    </View>
+    <>
+      {user && (
+        <Card>
+          <Card.Image source={{uri: 'https://placekitten.com/300/300'}} />
+          <ListItem>
+            <Icon name="person" />
+            <ListItem.Title>{user.username}</ListItem.Title>
+          </ListItem>
+          <ListItem>
+            <Icon name="email" />
+            <ListItem.Title>{user.email}</ListItem.Title>
+          </ListItem>
+          <ListItem>
+            <ListItem.Title>user id: {user.user_id}</ListItem.Title>
+          </ListItem>
+          <Card.Divider />
+          <Button onPress={() => navigation.navigate('My Files')}>
+            My Files &nbsp;
+            <Icon name="folder" color="white" />
+          </Button>
+          <Card.Divider />
+          <Button onPress={handleLogout}>
+            Logout &nbsp;
+            <Icon name="logout" color="white" />
+          </Button>
+        </Card>
+      )}
+    </>
   );
 };
 
