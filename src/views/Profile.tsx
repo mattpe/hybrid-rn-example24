@@ -3,9 +3,8 @@ import {
   ParamListBase,
   useNavigation,
 } from '@react-navigation/native';
-import {Button, Card, Icon, ListItem} from '@rneui/themed';
-
-import useUserContext from '../hooks/UserHook';
+import {Button, Card, Icon, ListItem} from '@rneui/base';
+import {useUserContext} from '../hooks/ContextHooks';
 
 const Profile = () => {
   const {handleLogout, user} = useUserContext();
