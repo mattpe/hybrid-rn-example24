@@ -3,8 +3,8 @@ import {Button, Card, Input} from '@rneui/base';
 import * as ImagePicker from 'expo-image-picker';
 import {useState} from 'react';
 import {TouchableOpacity, Keyboard, ScrollView} from 'react-native';
-import {useFile, useMedia} from '../hooks/apiHooks';
 import {Video} from 'expo-av';
+import {useFile, useMedia} from '../hooks/apiHooks';
 
 const Upload = () => {
   const [image, setImage] = useState<ImagePicker.ImagePickerResult | null>(
@@ -33,7 +33,7 @@ const Upload = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.6,
     });
 
     console.log(result);
@@ -68,6 +68,7 @@ const Upload = () => {
               }}
             />
           )}
+          <Card.Divider />
           <Controller
             control={control}
             rules={{
