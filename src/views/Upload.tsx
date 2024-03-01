@@ -1,6 +1,5 @@
 import {Controller, useForm} from 'react-hook-form';
 import {Button, Card, Input} from '@rneui/base';
-import {Credentials} from '../types/LocalTypes';
 import {useFile, useMedia} from '../hooks/apiHooks';
 
 const Upload = () => {
@@ -16,12 +15,16 @@ const Upload = () => {
   });
 
   const doUpload = async (inputs) => {
-    await postFile();
-    await postMedia();
+    console.log('inputs', inputs);
+    // await postFile();
+    // await postMedia();
   };
 
   return (
     <Card>
+      <Card.Image
+        source={{uri: 'https://via.placeholder.com/150?text=Choose+media'}}
+      />
       <Controller
         control={control}
         rules={{
