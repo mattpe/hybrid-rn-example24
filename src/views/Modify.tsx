@@ -1,7 +1,6 @@
 import {Controller, useForm} from 'react-hook-form';
 import {Button, Card, Input} from '@rneui/base';
-import * as ImagePicker from 'expo-image-picker';
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import {TouchableOpacity, Keyboard, ScrollView, Alert} from 'react-native';
 import {Video} from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,9 +9,9 @@ import {
   ParamListBase,
   useNavigation,
 } from '@react-navigation/native';
-import {useFile, useMedia} from '../hooks/apiHooks';
+import {useMedia} from '../hooks/apiHooks';
 import {useUpdateContext} from '../hooks/UpdateHook';
-import {MediaItemWithOwner} from '../types/DBTypes';
+import {MediaItem, MediaItemWithOwner} from '../types/DBTypes';
 
 const Modify = ({route}: any) => {
   const item: MediaItemWithOwner = route.params;
@@ -20,7 +19,10 @@ const Modify = ({route}: any) => {
   const {update, setUpdate} = useUpdateContext();
   const navigation: NavigationProp<ParamListBase> = useNavigation();
 
-  const initValues = {title: item.title, description: item.description};
+  const initValues: Pick<MediaItem, 'title' | 'description'> = {
+    title: item.title,
+    description: item.description,
+  };
   const {
     control,
     handleSubmit,
@@ -31,44 +33,21 @@ const Modify = ({route}: any) => {
   });
 
   const resetForm = () => {
-    reset();
-    setImage(null);
+    reset(initValues);
   };
 
-  const doModify = async (inputs: {title: string; description: string}) => {
-    if (!image) {
-      Alert.alert('No media selected');
-      return;
-    }
-
+  const doModify = async (inputs: Pick<MediaItem, 'title' | 'description'>) => {
     try {
       const token = await AsyncStorage.getItem('token');
       if (token) {
-        const fileResponse = await postExpoFile(image.assets![0].uri, token);
-        const mediaResponse = await postMedia(fileResponse, inputs, token);
+        const mediaResponse = await putMedia(inputs, token, item.media_id);
         setUpdate(!update);
         Alert.alert(mediaResponse.message);
-        navigation.navigate('Home');
+        navigation.navigate('My Files');
         resetForm();
       }
     } catch (error) {
       Alert.alert('Error', (error as Error).message);
-    }
-  };
-
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.6,
-    });
-
-    console.log(result);
-
-    if (!result.canceled) {
-      setImage(result);
     }
   };
 
@@ -88,20 +67,17 @@ const Modify = ({route}: any) => {
         activeOpacity={1}
       >
         <Card>
-          {image && image.assets![0].mimeType?.includes('video') ? (
+          {item && item.media_type.includes('video') ? (
             <Video
-              source={{uri: image.assets![0].uri}}
+              source={{uri: 'http:' + item.filename}}
               style={{height: 300}}
               useNativeControls
             />
           ) : (
             <Card.Image
-              onPress={pickImage}
               style={{aspectRatio: 1, height: 300}}
               source={{
-                uri: image
-                  ? image.assets![0].uri
-                  : 'https://via.placeholder.com/150?text=Choose+media',
+                uri: 'http:' + item.filename,
               }}
             />
           )}
@@ -136,7 +112,7 @@ const Modify = ({route}: any) => {
                 placeholder="Description"
                 onBlur={onBlur}
                 onChangeText={onChange}
-                value={value}
+                value={value!} // hölmö virheilmoitus, laitoin !
                 errorMessage={errors.description?.message}
                 multiline={true}
                 numberOfLines={5}
@@ -145,8 +121,6 @@ const Modify = ({route}: any) => {
             )}
             name="description"
           />
-          <Button title="Choose media" onPress={pickImage} />
-          <Card.Divider />
           <Button title="Modify" onPress={handleSubmit(doModify)} />
           <Card.Divider />
           <Button title="Reset" onPress={resetForm} />

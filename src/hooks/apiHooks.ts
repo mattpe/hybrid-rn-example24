@@ -42,7 +42,6 @@ const useMedia = () => {
       );
       itemsWithOwner.reverse();
       setMediaArray(itemsWithOwner);
-      console.log('mediaArray updated:', itemsWithOwner);
     } catch (error) {
       console.error('getMedia failed', error);
     }
@@ -87,11 +86,11 @@ const useMedia = () => {
   };
 
   const putMedia = async (
-    inputs: Record<string, string>,
+    inputs: Pick<MediaItem, 'title' | 'description'>,
     token: string,
     media_id: number,
   ) => {
-    await fetchData<MessageResponse>(
+    return await fetchData<MessageResponse>(
       process.env.EXPO_PUBLIC_MEDIA_API + '/media/' + media_id,
       {
         method: 'PUT',

@@ -67,8 +67,6 @@ const Upload = () => {
       quality: 0.6,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       setImage(result);
     }
