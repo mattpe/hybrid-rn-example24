@@ -2,16 +2,24 @@ import {Controller, useForm} from 'react-hook-form';
 import {Button, Card, Input} from '@rneui/base';
 import * as ImagePicker from 'expo-image-picker';
 import {useState} from 'react';
-import {TouchableOpacity, Keyboard, ScrollView} from 'react-native';
+import {TouchableOpacity, Keyboard, ScrollView, Alert} from 'react-native';
 import {Video} from 'expo-av';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import {useFile, useMedia} from '../hooks/apiHooks';
 
 const Upload = () => {
   const [image, setImage] = useState<ImagePicker.ImagePickerResult | null>(
     null,
   );
-  const {postFile} = useFile();
+  const {postExpoFile} = useFile();
   const {postMedia} = useMedia();
+  const navigation: NavigationProp<ParamListBase> = useNavigation();
+
   const initValues = {title: '', description: ''};
   const {
     control,
@@ -21,10 +29,23 @@ const Upload = () => {
     defaultValues: initValues,
   });
 
-  const doUpload = async (inputs) => {
-    console.log('inputs', inputs);
-    // await postFile();
-    // await postMedia();
+  const doUpload = async (inputs: {title: string; description: string}) => {
+    if (!image) {
+      Alert.alert('No media selected');
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (token) {
+        const fileResponse = await postExpoFile(image.assets![0].uri, token);
+        const mediaResponse = await postMedia(fileResponse, inputs, token);
+        Alert.alert(mediaResponse.message);
+        navigation.navigate('Home');
+      }
+    } catch (error) {
+      Alert.alert('Error', (error as Error).message);
+    }
   };
 
   const pickImage = async () => {
