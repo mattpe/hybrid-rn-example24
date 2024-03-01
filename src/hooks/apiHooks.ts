@@ -16,9 +16,11 @@ import {
   UploadResponse,
   UserResponse,
 } from '../types/MessageTypes';
+import {useUpdateContext} from './UpdateHook';
 
 const useMedia = () => {
   const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([]);
+  const {update} = useUpdateContext();
 
   const getMedia = async () => {
     try {
@@ -38,6 +40,7 @@ const useMedia = () => {
           return itemWithOwner;
         }),
       );
+      itemsWithOwner.reverse();
       setMediaArray(itemsWithOwner);
       console.log('mediaArray updated:', itemsWithOwner);
     } catch (error) {
@@ -47,7 +50,7 @@ const useMedia = () => {
 
   useEffect(() => {
     getMedia();
-  }, []);
+  }, [update]);
 
   const postMedia = (
     file: UploadResponse,
@@ -80,6 +83,24 @@ const useMedia = () => {
     return fetchData<MediaResponse>(
       process.env.EXPO_PUBLIC_MEDIA_API + '/media',
       options,
+    );
+  };
+
+  const putMedia = (
+    inputs: Record<string, string>,
+    token: string,
+    media_id: number,
+  ) => {
+    await fetchData<MessageResponse>(
+      process.env.EXPO_PUBLIC_MEDIA_API + '/media/' + media_id,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(inputs),
+      },
     );
   };
 

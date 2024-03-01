@@ -12,17 +12,15 @@ import {
 } from '@react-navigation/native';
 import {useFile, useMedia} from '../hooks/apiHooks';
 import {useUpdateContext} from '../hooks/UpdateHook';
+import {MediaItemWithOwner} from '../types/DBTypes';
 
-const Upload = () => {
-  const [image, setImage] = useState<ImagePicker.ImagePickerResult | null>(
-    null,
-  );
-  const {postExpoFile} = useFile();
-  const {postMedia} = useMedia();
+const Modify = ({route}: any) => {
+  const item: MediaItemWithOwner = route.params;
+  const {putMedia} = useMedia();
   const {update, setUpdate} = useUpdateContext();
   const navigation: NavigationProp<ParamListBase> = useNavigation();
 
-  const initValues = {title: '', description: ''};
+  const initValues = {title: item.title, description: item.description};
   const {
     control,
     handleSubmit,
@@ -37,7 +35,7 @@ const Upload = () => {
     setImage(null);
   };
 
-  const doUpload = async (inputs: {title: string; description: string}) => {
+  const doModify = async (inputs: {title: string; description: string}) => {
     if (!image) {
       Alert.alert('No media selected');
       return;
@@ -149,7 +147,7 @@ const Upload = () => {
           />
           <Button title="Choose media" onPress={pickImage} />
           <Card.Divider />
-          <Button title="Upload" onPress={handleSubmit(doUpload)} />
+          <Button title="Modify" onPress={handleSubmit(doModify)} />
           <Card.Divider />
           <Button title="Reset" onPress={resetForm} />
         </Card>
@@ -158,4 +156,4 @@ const Upload = () => {
   );
 };
 
-export default Upload;
+export default Modify;
